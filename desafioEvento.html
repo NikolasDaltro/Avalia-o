@@ -1,0 +1,26 @@
+<!--Criar butão de deletar-->
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<div id="app">
+    <p>{{contador}}</p>
+    <button v-on:click="somar()">Somar 1</button>
+    <button v-on:click="apagar()">Apagar</button>
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            contador: 0
+        },
+        methods:{
+            somar(){
+                this.contador++
+            },
+            apagar(){
+                this.contador = 0
+            }
+        }
+    })
+</script>

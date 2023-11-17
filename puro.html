@@ -1,0 +1,27 @@
+<!--Utilizando HTML Puro-->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>  
+
+<div id="app">
+<p>{{titulo}}</p>
+<a v-bind:href="link">Google</a>
+<p>{{saudacao()}}</p>
+<hr>
+<p v-html="linkHtml"></p>
+
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            titulo:'Utilizando HtML Puro',
+            link:'http:www.google.com',
+            linkHtml: '<a href="http://facebook.com.br">Facebook</a>'
+        },
+        methods: {
+            saudacao: function(){
+                return this.titulo
+            }
+        }
+    })
+</script>

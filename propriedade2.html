@@ -1,0 +1,46 @@
+<script src="https://unpkg.com/vue@2"></script>
+
+<div id="app">
+    <button v-on:click="aumentar">Aumentar</button>
+    <button v-on:click="contador2++">Aumentar 2</button>
+    <button v-on:click="diminuir">Diminuir</button>
+    <p>Contador: {{ contador }}  | {{ contador2 }}</p>
+    <p>Resultado: {{ resultado }}</p>
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+            contador: 0,
+            contador2: 0,
+
+        }, 
+        computed:{
+            resultado() {
+                console.log("funcionando")
+              return this.contador >= 5 ?
+                'Maior ou Igual a 5' : 'Menor que 5'
+            }
+        },
+        watch:{
+            contador(novo, antigo){
+                //console.log(novo, antigo) averiguando setá funcionando 
+                setTimeout (()=>{
+                    this.contador = 0 //utilizado arrow fuction para resumir a indicação da funçaõ.
+                }, 2000)     //nessa funcionalidade utilizamos para que o contador seja zerado quando bater 2 segundos.
+            }
+
+        },
+        methods:{
+            aumentar(){
+                this.contador++        
+            },
+            diminuir(){
+                this.contador--              
+            },
+        
+
+        }
+    })
+</script>

@@ -1,0 +1,23 @@
+<!-- acessando o titulo utilizando o this-->
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<div id="app">
+<p>{{ titulo }}</p>
+<p>{{saudacao()}}</p>
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data: {
+            titulo: 'Template parte 2'
+        },
+        methods: {
+            saudacao: function(){
+                return this.titulo
+            }
+        }
+    })
+
+
+</script>

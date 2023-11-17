@@ -1,0 +1,47 @@
+<script src="https://unpkg.com/vue@2"></script>
+<style>
+    .caixas{
+        display: flex;
+        justify-content: space-around;
+    }
+    .demo{
+        width: 100px;
+        height: 100px;
+        background-color: gray;
+    
+    }
+    .c1{
+        background-color: red;
+    }
+    .c2{
+        background-color: green;
+    }
+    .c3{
+        background-color: blue;
+    }
+    .girar{
+        transform: rotate(45deg);
+    }
+</style>
+
+<div id="app">
+    <div class="caixas">
+        <div class="demo "></div>
+        <div class="demo" :style="{'background-color': cor}"></div>
+        <div class="demo"></div>
+    </div>
+    <hr>
+    <input type="text" v-model="cor">
+
+</div>
+
+<script>
+    new Vue({
+        el:'#app',
+        data:{
+           cor: 'blue'
+        },
+     
+        
+    })
+</script>

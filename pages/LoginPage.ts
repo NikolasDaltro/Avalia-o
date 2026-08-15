@@ -15,6 +15,10 @@ export class LoginPage {
     this.errorMessage = page.locator('[data-test="error"]');
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                            Ações de Interação                              */
+  /* -------------------------------------------------------------------------- */
+
   async acessar(): Promise<void> {
     await this.page.goto('/');
   }
@@ -28,10 +32,16 @@ export class LoginPage {
     await this.loginButton.click();
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*                      Validações (Positiva e Negativa)                      */
+  /* -------------------------------------------------------------------------- */
+
+  // Validação Positiva
   async validarLoginRealizado(): Promise<void> {
     await expect(this.page).toHaveURL(/inventory/);
   }
 
+  // Validação Negativa / Tratamento de Erros
   async validarMensagemErro(
     mensagemEsperada: string
   ): Promise<void> {
@@ -40,4 +50,4 @@ export class LoginPage {
       mensagemEsperada
     );
   }
-}
+}cle

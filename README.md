@@ -123,13 +123,13 @@ A partir da User Story e dos critérios de aceitação, considerei os seguintes 
 | CT-09 | Voltar para a listagem após adicionar um produto | Borda | AC2 | Sim |
 | CT-10 | Atualizar a página com produto no carrinho | Borda | AC2 / AC3 | Sim |
 
-### O que eu automatizaria?
+### O que eu priorizei ao automatizar?
 
-Eu priorizaria os fluxos de adicionar, remover e validar os produtos no carrinho, além da quantidade de itens.
+Os fluxos de adicionar, remover e validar os produtos no carrinho, além da quantidade de itens.
 
 São cenários que precisam ser executados com frequência e têm impacto direto no fluxo de compra, por isso são bons candidatos para uma suíte de regressão automatizada.
 
-Também automatizaria os principais cenários negativos quando o comportamento esperado for previsível.
+Também automatizei os principais cenários negativos quando o comportamento esperado for previsível.
 
 O cenário de produto indisponível não seria minha primeira prioridade de automação, pois dependeria de uma massa de teste controlada para garantir que o produto estivesse realmente sem estoque.
 

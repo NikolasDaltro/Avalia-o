@@ -7,190 +7,243 @@ import { CheckoutPage } from '../../pages/CheckoutPage';
 
 test.describe('Fluxos Web - SauceDemo', () => {
 
-  test('usuário deve adicionar produto ao carrinho com sucesso', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+  test.describe('Cenários Positivos', () => {
 
-    await loginPage.acessar();
+    test('usuário deve adicionar produto ao carrinho com sucesso', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
 
-    await loginPage.realizarLogin(
-      'standard_user',
-      'secret_sauce'
-    );
+      await loginPage.acessar();
 
-    await loginPage.validarLoginRealizado();
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
 
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Backpack'
-    );
+      await loginPage.validarLoginRealizado();
 
-    await inventoryPage.validarQuantidadeCarrinho(1);
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Backpack'
+      );
 
-    await inventoryPage.abrirCarrinho();
+      await inventoryPage.validarQuantidadeCarrinho(1);
 
-    await cartPage.validarProduto(
-      'Sauce Labs Backpack',
-      '$29.99'
-    );
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.validarProduto(
+        'Sauce Labs Backpack',
+        '$29.99'
+      );
+    });
+
+    test('usuário deve adicionar dois produtos e visualizar a quantidade correta no carrinho', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+
+      await loginPage.acessar();
+
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
+
+      await loginPage.validarLoginRealizado();
+
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Backpack'
+      );
+
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Bike Light'
+      );
+
+      await inventoryPage.validarQuantidadeCarrinho(2);
+    });
+
+    test('usuário deve remover produto do carrinho com sucesso', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+
+      await loginPage.acessar();
+
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
+
+      await loginPage.validarLoginRealizado();
+
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Backpack'
+      );
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.removerProduto(
+        'Sauce Labs Backpack'
+      );
+
+      await cartPage.validarProdutoRemovido(
+        'Sauce Labs Backpack'
+      );
+    });
+
+    test('usuário deve realizar uma compra completa com sucesso', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+      const checkoutPage = new CheckoutPage(page);
+
+      await loginPage.acessar();
+
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
+
+      await loginPage.validarLoginRealizado();
+
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Backpack'
+      );
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.validarProduto(
+        'Sauce Labs Backpack',
+        '$29.99'
+      );
+
+      await checkoutPage.iniciarCheckout();
+
+      await checkoutPage.preencherDados(
+        'Nikolas',
+        'QA',
+        '77000-000'
+      );
+
+      await checkoutPage.continuarCheckout();
+
+      await checkoutPage.validarProdutoNoResumo(
+        'Sauce Labs Backpack',
+        '$29.99'
+      );
+
+      await checkoutPage.validarResumoFinanceiro(
+        '$29.99',
+        '$32.39'
+      );
+
+      await checkoutPage.finalizarCompra();
+
+      await checkoutPage.validarCompraFinalizada();
+    });
+
   });
 
-  test('usuário deve adicionar dois produtos e visualizar a quantidade correta no carrinho', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
+  test.describe('Cenários Negativos', () => {
 
-    await loginPage.acessar();
+    test('deve exibir erro ao realizar login com credenciais inválidas', async ({ page }) => {
+      const loginPage = new LoginPage(page);
 
-    await loginPage.realizarLogin(
-      'standard_user',
-      'secret_sauce'
-    );
+      await loginPage.acessar();
 
-    await loginPage.validarLoginRealizado();
+      await loginPage.realizarLogin(
+        'usuario_invalido',
+        'senha_invalida'
+      );
 
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Backpack'
-    );
+      await loginPage.validarMensagemErro(
+        'Username and password do not match'
+      );
+    });
 
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Bike Light'
-    );
+    test('deve impedir login de usuário bloqueado', async ({ page }) => {
+      const loginPage = new LoginPage(page);
 
-    await inventoryPage.validarQuantidadeCarrinho(2);
-  });
+      await loginPage.acessar();
 
-  test('usuário deve remover produto do carrinho com sucesso', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
+      await loginPage.realizarLogin(
+        'locked_out_user',
+        'secret_sauce'
+      );
 
-    await loginPage.acessar();
+      await loginPage.validarMensagemErro(
+        'Sorry, this user has been locked out'
+      );
+    });
 
-    await loginPage.realizarLogin(
-      'standard_user',
-      'secret_sauce'
-    );
+    test('deve impedir login quando o usuário não for informado', async ({ page }) => {
+      const loginPage = new LoginPage(page);
 
-    await loginPage.validarLoginRealizado();
+      await loginPage.acessar();
 
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Backpack'
-    );
+      await loginPage.realizarLogin(
+        '',
+        'secret_sauce'
+      );
 
-    await inventoryPage.validarQuantidadeCarrinho(1);
+      await loginPage.validarMensagemErro(
+        'Username is required'
+      );
+    });
 
-    await inventoryPage.abrirCarrinho();
+    test('deve impedir login quando a senha não for informada', async ({ page }) => {
+      const loginPage = new LoginPage(page);
 
-    await cartPage.removerProduto(
-      'Sauce Labs Backpack'
-    );
+      await loginPage.acessar();
 
-    await cartPage.validarProdutoRemovido(
-      'Sauce Labs Backpack'
-    );
-  });
+      await loginPage.realizarLogin(
+        'standard_user',
+        ''
+      );
 
-  test('deve exibir erro ao realizar login com credenciais inválidas', async ({ page }) => {
-    const loginPage = new LoginPage(page);
+      await loginPage.validarMensagemErro(
+        'Password is required'
+      );
+    });
 
-    await loginPage.acessar();
+    test('usuário não deve avançar no checkout sem informar o CEP', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const checkoutPage = new CheckoutPage(page);
 
-    await loginPage.realizarLogin(
-      'usuario_invalido',
-      'senha_invalida'
-    );
+      await loginPage.acessar();
 
-    await loginPage.validarMensagemErro(
-      'Username and password do not match'
-    );
-  });
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
 
-  test('usuário deve realizar uma compra completa com sucesso', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const cartPage = new CartPage(page);
-    const checkoutPage = new CheckoutPage(page);
+      await loginPage.validarLoginRealizado();
 
-    await loginPage.acessar();
+      await inventoryPage.adicionarProdutoAoCarrinho(
+        'Sauce Labs Backpack'
+      );
 
-    await loginPage.realizarLogin(
-      'standard_user',
-      'secret_sauce'
-    );
+      await inventoryPage.abrirCarrinho();
 
-    await loginPage.validarLoginRealizado();
+      await checkoutPage.iniciarCheckout();
 
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Backpack'
-    );
+      await checkoutPage.preencherDados(
+        'Nikolas',
+        'QA',
+        ''
+      );
 
-    await inventoryPage.validarQuantidadeCarrinho(1);
+      await checkoutPage.continuarCheckout();
 
-    await inventoryPage.abrirCarrinho();
+      await checkoutPage.validarMensagemErro(
+        'Postal Code is required'
+      );
+    });
 
-    await cartPage.validarProduto(
-      'Sauce Labs Backpack',
-      '$29.99'
-    );
-
-    await checkoutPage.iniciarCheckout();
-
-    await checkoutPage.preencherDados(
-      'Nikolas',
-      'QA',
-      '77000-000'
-    );
-
-    await checkoutPage.continuarCheckout();
-
-    await checkoutPage.validarProdutoNoResumo(
-      'Sauce Labs Backpack',
-      '$29.99'
-    );
-
-    await checkoutPage.validarResumoFinanceiro(
-      '$29.99',
-      '$32.39'
-    );
-
-    await checkoutPage.finalizarCompra();
-
-    await checkoutPage.validarCompraFinalizada();
-  });
-
-  test('usuário não deve avançar no checkout sem informar o CEP', async ({ page }) => {
-    const loginPage = new LoginPage(page);
-    const inventoryPage = new InventoryPage(page);
-    const checkoutPage = new CheckoutPage(page);
-
-    await loginPage.acessar();
-
-    await loginPage.realizarLogin(
-      'standard_user',
-      'secret_sauce'
-    );
-
-    await loginPage.validarLoginRealizado();
-
-    await inventoryPage.adicionarProdutoAoCarrinho(
-      'Sauce Labs Backpack'
-    );
-
-    await inventoryPage.abrirCarrinho();
-
-    await checkoutPage.iniciarCheckout();
-
-    await checkoutPage.preencherDados(
-      'Nikolas',
-      'QA',
-      ''
-    );
-
-    await checkoutPage.continuarCheckout();
-
-    await checkoutPage.validarMensagemErro(
-      'Postal Code is required'
-    );
   });
 
 });

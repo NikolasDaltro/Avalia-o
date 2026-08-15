@@ -33,15 +33,22 @@ export class LoginPage {
   }
 
   /* -------------------------------------------------------------------------- */
-  /*                      Validações (Positiva e Negativa)                      */
+  /*                            Validações Positivas                            */
   /* -------------------------------------------------------------------------- */
 
-  // Validação Positiva
   async validarLoginRealizado(): Promise<void> {
     await expect(this.page).toHaveURL(/inventory/);
   }
 
-  // Validação Negativa / Tratamento de Erros
+  async validarTelaLogin(): Promise<void> {
+    await expect(this.loginButton).toBeVisible();
+    await expect(this.page).toHaveURL('/');
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                   Validações Negativas / Tratamento de Erros               */
+  /* -------------------------------------------------------------------------- */
+
   async validarMensagemErro(
     mensagemEsperada: string
   ): Promise<void> {
@@ -50,4 +57,4 @@ export class LoginPage {
       mensagemEsperada
     );
   }
-}cle
+}

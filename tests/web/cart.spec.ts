@@ -145,6 +145,149 @@ test.describe('Fluxos Web - SauceDemo', () => {
       await checkoutPage.validarCompraFinalizada();
     });
 
+    test('deve remover um de dois produtos e manter o outro no carrinho', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Backpack');
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Bike Light');
+
+      await inventoryPage.validarQuantidadeCarrinho(2);
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.removerProduto('Sauce Labs Backpack');
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+
+      await cartPage.validarProdutoRemovido('Sauce Labs Backpack');
+
+      await cartPage.validarProduto(
+        'Sauce Labs Bike Light',
+        '$9.99'
+      );
+    });
+
+    test('deve remover o último produto e deixar o carrinho vazio', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Backpack');
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.removerProduto('Sauce Labs Backpack');
+
+      await cartPage.validarProdutoRemovido('Sauce Labs Backpack');
+      await inventoryPage.validarCarrinhoVazio();
+    });
+
+    test('deve manter o produto no carrinho ao continuar comprando', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Backpack');
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.validarProduto(
+        'Sauce Labs Backpack',
+        '$29.99'
+      );
+
+      await cartPage.continuarComprando();
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+    });
+
+    test('deve manter o produto no carrinho após recarregar a página', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Backpack');
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+
+      await page.reload();
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+    });
+
+    test('deve exibir corretamente dois produtos adicionados ao carrinho', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+      const cartPage = new CartPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Backpack');
+      await inventoryPage.adicionarProdutoAoCarrinho('Sauce Labs Bike Light');
+
+      await inventoryPage.validarQuantidadeCarrinho(2);
+      await inventoryPage.abrirCarrinho();
+
+      await cartPage.validarProduto(
+        'Sauce Labs Backpack',
+        '$29.99'
+      );
+
+      await cartPage.validarProduto(
+        'Sauce Labs Bike Light',
+        '$9.99'
+      );
+    });
+
+    test('deve adicionar produto ao carrinho pela página de detalhes', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+
+      await loginPage.acessar();
+      await loginPage.realizarLogin('standard_user', 'secret_sauce');
+
+      await inventoryPage.abrirDetalhesProduto('Sauce Labs Backpack');
+
+      await inventoryPage.adicionarProdutoPelosDetalhes();
+
+      await inventoryPage.validarQuantidadeCarrinho(1);
+    });
+
+    test('usuário deve realizar logout com sucesso', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+
+      await loginPage.acessar();
+
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
+
+      await loginPage.validarLoginRealizado();
+
+      await inventoryPage.abrirMenu();
+
+      await inventoryPage.realizarLogout();
+
+      await loginPage.validarTelaLogin();
+    });
+
   });
 
   test.describe('Cenários Negativos', () => {
@@ -241,6 +384,30 @@ test.describe('Fluxos Web - SauceDemo', () => {
 
       await checkoutPage.validarMensagemErro(
         'Postal Code is required'
+      );
+    });
+
+    test('usuário não deve acessar área autenticada após realizar logout', async ({ page }) => {
+      const loginPage = new LoginPage(page);
+      const inventoryPage = new InventoryPage(page);
+
+      await loginPage.acessar();
+
+      await loginPage.realizarLogin(
+        'standard_user',
+        'secret_sauce'
+      );
+
+      await loginPage.validarLoginRealizado();
+
+      await inventoryPage.abrirMenu();
+
+      await inventoryPage.realizarLogout();
+
+      await page.goto('/inventory.html');
+
+      await loginPage.validarMensagemErro(
+        "You can only access '/inventory.html' when you are logged in"
       );
     });
 

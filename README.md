@@ -145,7 +145,7 @@ Essa mesma ideia também foi aplicada na automação da API, onde as páginas s�
 
 ### Cenários complementares da automação Web
 
-Além dos cenários diretamente relacionados à User Story, acrescentei alguns testes de autenticação, checkout e sessão.
+Além dos cenários diretamente relacionados à User Story, acrescentei testes de autenticação, checkout e sessão.
 
 | ID | Cenário | Tipo | Área | Automatizado? |
 |---|---|---|---|---|
@@ -271,10 +271,10 @@ Em um ambiente controlado, utilizaria uma ferramenta específica, como k6 ou JMe
 
 O projeto utiliza o relatório HTML nativo do Playwright.
 
-Após executar os testes, o relatório pode ser aberto com:
+Após executar os testes:
 
 ```bash
-npx playwright show-report
+npm run report
 ```
 
 O relatório permite visualizar os testes executados, status, duração e detalhes das falhas.
@@ -282,7 +282,7 @@ O relatório permite visualizar os testes executados, status, duração e detalh
 ### Executando somente os testes de API
 
 ```bash
-npx playwright test --project=api
+npm run test:api
 ```
 
 ---
@@ -425,13 +425,13 @@ Isso ajuda a reduzir flakiness e evita depender de tempos fixos para a execuçã
 ### Executando somente os testes Web
 
 ```bash
-npx playwright test --project=chromium
+npm run test:web
 ```
 
 Para acompanhar a execução no navegador:
 
 ```bash
-npx playwright test --project=chromium --headed
+npm run test:web:headed
 ```
 
 ### Execução completa
@@ -439,13 +439,13 @@ npx playwright test --project=chromium --headed
 Para executar API e Web:
 
 ```bash
-npx playwright test --project=api --project=chromium
+npm test
 ```
 
 Após a execução, o relatório HTML pode ser aberto com:
 
 ```bash
-npx playwright show-report
+npm run report
 ```
 
 ---
@@ -526,38 +526,58 @@ Crie um arquivo `.env` na raiz do projeto com base no `.env.example`:
 REQRES_API_KEY=sua_chave_aqui
 ```
 
+A chave pode ser criada no painel do ReqRes e deve permanecer apenas no ambiente local ou nos Secrets utilizados pelo pipeline.
+
+O arquivo `.env` não deve ser versionado.
+
 ---
 
 ## Como executar
 
-### API
+Os principais comandos foram adicionados ao `package.json` para simplificar a execução do projeto.
+
+### Executar todos os testes
 
 ```bash
-npx playwright test --project=api
+npm test
 ```
 
-### Web
+Executa os projetos de API e Chromium.
+
+### Executar somente os testes de API
 
 ```bash
-npx playwright test --project=chromium
+npm run test:api
 ```
 
-### API + Web
+### Executar somente os testes Web
 
 ```bash
-npx playwright test --project=api --project=chromium
+npm run test:web
 ```
 
-### Web com navegador visível
+### Executar Web com o navegador visível
 
 ```bash
-npx playwright test --project=chromium --headed
+npm run test:web:headed
 ```
 
-### Abrir relatório
+### Abrir o relatório
 
 ```bash
-npx playwright show-report
+npm run report
+```
+
+Os scripts utilizados são:
+
+```json
+"scripts": {
+  "test": "playwright test --project=api --project=chromium",
+  "test:api": "playwright test --project=api",
+  "test:web": "playwright test --project=chromium",
+  "test:web:headed": "playwright test --project=chromium --headed",
+  "report": "playwright show-report"
+}
 ```
 
 ---

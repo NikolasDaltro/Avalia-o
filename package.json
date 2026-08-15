@@ -3,7 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "playwright test --project=api --project=chromium",
+    "test:api": "playwright test --project=api",
+    "test:web": "playwright test --project=chromium",
+    "test:web:headed": "playwright test --project=chromium --headed",
+    "report": "playwright show-report"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

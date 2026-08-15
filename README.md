@@ -422,6 +422,56 @@ As esperas são feitas através dos mecanismos nativos do Playwright, como `expe
 
 Isso ajuda a reduzir flakiness e evita depender de tempos fixos para a execução dos testes.
 
+### Evidências de falha
+
+Para facilitar a análise e investigação de falhas, o Playwright foi configurado para gerar evidências automaticamente quando um teste Web falha.
+
+Em caso de falha são mantidos:
+
+- Screenshot do estado da aplicação;
+- Vídeo da execução;
+- Trace para análise detalhada da execução.
+
+A configuração utilizada no `playwright.config.ts` é:
+
+```typescript
+screenshot: 'only-on-failure',
+video: 'retain-on-failure',
+trace: 'retain-on-failure',
+```
+
+Também foram incluídas nos testes Web algumas validações de falha controlada, mantidas comentadas para não interferir na execução normal da suíte.
+
+Essas validações podem ser descomentadas individualmente para simular uma falha e verificar a geração das evidências pelo Playwright.
+
+Foram considerados exemplos de falha controlada envolvendo:
+
+- Quantidade incorreta de produtos no carrinho;
+- Divergência no preço do produto;
+- Divergência no valor total do checkout;
+- Estado incorreto do carrinho após recarregar a página;
+- Produto esperado inexistente no carrinho.
+
+Para executar os testes Web:
+
+```bash
+npm run test:web
+```
+
+Quando houver uma falha, as evidências são armazenadas no diretório:
+
+```text
+test-results/
+```
+
+O trace de uma execução pode ser analisado com:
+
+```bash
+npx playwright show-trace caminho/do/trace.zip
+```
+
+As validações de falha controlada permanecem comentadas por padrão, portanto a suíte entregue continua sendo executada normalmente sem falhas intencionais.
+
 ### Executando somente os testes Web
 
 ```bash

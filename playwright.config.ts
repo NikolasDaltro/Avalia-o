@@ -20,7 +20,8 @@ export default defineConfig({
   ],
 
   use: {
-    trace: 'on-first-retry',
+    baseURL: 'https://www.saucedemo.com',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure'
   },
@@ -38,8 +39,7 @@ export default defineConfig({
       name: 'chromium',
       testMatch: /web\/.*\.spec\.ts/,
       use: {
-        ...devices['Desktop Chrome'],
-        baseURL: 'https://www.saucedemo.com'
+        ...devices['Desktop Chrome']
       }
     }
   ]
